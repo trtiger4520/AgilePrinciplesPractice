@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 
 namespace AgilePrinciplesPractice.Ch23
 {
@@ -45,6 +44,39 @@ namespace AgilePrinciplesPractice.Ch23
             {
                 itsListBox.ClearSelection();
             }
+        }
+    }
+
+    public class TextBox
+    {
+        public event EventHandler TextChanged;
+
+        public string Text { get; }
+    }
+    public class ListBox
+    {
+        public ListItemCollection Items { get; }
+        public void ClearSelection()
+        {
+            foreach (var item in Items)
+            {
+                item.Selected = false;
+            }
+        }
+    }
+
+    public class ListItemCollection : List<ListItem>
+    {
+
+    }
+
+    public class ListItem
+    {
+        public bool Selected { get; set; }
+
+        public override string ToString()
+        {
+            return "";
         }
     }
 }

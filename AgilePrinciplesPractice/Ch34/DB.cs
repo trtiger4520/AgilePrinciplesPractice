@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Runtime.InteropServices;
-using System.Web.UI.WebControls;
 
 namespace AgilePrinciplesPractice.Ch34
 {
@@ -33,7 +31,7 @@ namespace AgilePrinciplesPractice.Ch34
         public static ProductData GetProductData(string sku)
         {
             SqlCommand command = BuildProductQueryCommand(sku);
-            IDataReader reader = ExecuteQueryStatement(command);
+            SqlDataReader reader = ExecuteQueryStatement(command);
             ProductData pd = ExtractProductDataFromReader(reader);
             reader.Close();
             return pd;
@@ -49,7 +47,7 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "INSERT INTO Orders(custId) VALUES(@custId);" + "SELECT scope_identity()";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@custId", customerId);
+            command.Parameters.Add(new SqlParameter("@custId", customerId));
             int newOrderId = Convert.ToInt32(command.ExecuteScalar());
             return new OrderData(newOrderId, customerId);
         }
@@ -57,7 +55,7 @@ namespace AgilePrinciplesPractice.Ch34
         public static ItemData[] GetItemsForOrders(int orderId)
         {
             SqlCommand command = BuildItemsForOrderQueryStatement(orderId);
-            IDataReader reader = command.ExecuteReader();
+            SqlDataReader reader = command.ExecuteReader();
             ItemData[] id = ExtractItemDataFromResultSet(reader);
             reader.Close();
             return id;
@@ -73,8 +71,8 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "SELECT cusid FROM orders" + "WHERE orderid = @orderId";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@orderId", orderId);
-            IDataReader reader = command.ExecuteReader();
+            command.Parameters.Add(new SqlParameter("@orderId", orderId));
+            SqlDataReader reader = command.ExecuteReader();
             OrderData od = null;
             if (reader.Read())
             {
@@ -97,7 +95,7 @@ namespace AgilePrinciplesPractice.Ch34
             command.ExecuteNonQuery();
         }
 
-        private static ItemData[] ExtractItemDataFromResultSet(IDataReader reader)
+        private static ItemData[] ExtractItemDataFromResultSet(SqlDataReader reader)
         {
             ArrayList items = new ArrayList();
             while (reader.Read())
@@ -117,13 +115,13 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "SELECT * FROM Items" + "WHERE orderid = @orderId";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@orderId", orderId);
+            command.Parameters.Add(new SqlParameter("@orderId", orderId));
             return command;
         }
 
-        private static IDataReader ExecuteQueryStatement(SqlCommand command)
+        private static SqlDataReader ExecuteQueryStatement(SqlCommand command)
         {
-            IDataReader reader = command.ExecuteReader();
+            SqlDataReader reader = command.ExecuteReader();
             reader.Read();
             return reader;
         }
@@ -132,11 +130,11 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "DELETE FROM Products WHERE sku = @sku";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@sku", sku);
+            command.Parameters.Add(new SqlParameter("@sku", sku));
             return command;
         }
 
-        private static ProductData ExtractProductDataFromReader(IDataReader reader)
+        private static ProductData ExtractProductDataFromReader(SqlDataReader reader)
         {
             ProductData pd = new ProductData();
             pd.Sku = reader["sku"].ToString();
@@ -149,7 +147,7 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "SELECT * FROM Products WHERE sku = @sku";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@sku", sku);
+            command.Parameters.Add(new SqlParameter("@sku", sku));
             return command;
         }
 
@@ -157,9 +155,9 @@ namespace AgilePrinciplesPractice.Ch34
         {
             string sql = "INSERT INTO Products VALUES(@sku,@name,@price)";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@sku", pd.Sku);
-            command.Parameters.Add("@price", pd.Price);
-            command.Parameters.Add("@name", pd.Name);
+            command.Parameters.Add(new SqlParameter("@sku", pd.Sku));
+            command.Parameters.Add(new SqlParameter("@price", pd.Price));
+            command.Parameters.Add(new SqlParameter("@name", pd.Name));
             return command;
         }
 
@@ -168,9 +166,9 @@ namespace AgilePrinciplesPractice.Ch34
             string sql = "INSERT INTO Items(orderId,quantity,sku) VALUES(@orderId,@quantity,@sku)";
 
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.Add("@orderId", pd.orderId);
-            command.Parameters.Add("@quantity", pd.qty);
-            command.Parameters.Add("@sku", pd.sku);
+            command.Parameters.Add(new SqlParameter("@orderId", pd.orderId));
+            command.Parameters.Add(new SqlParameter("@quantity", pd.qty));
+            command.Parameters.Add(new SqlParameter("@sku", pd.sku));
             return command;
         }
     }
