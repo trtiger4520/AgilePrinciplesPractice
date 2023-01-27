@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace AgilePrinciplesPractice.Ch4;
 
-namespace AgilePrinciplesPractice.Ch4
+class Ch4Sample
 {
-    class Ch4Sample
-    {
-    }
 }
