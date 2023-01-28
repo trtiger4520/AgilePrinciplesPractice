@@ -52,14 +52,47 @@ public class GeneratePrimesTest
         });
     }
 
+    [Test]
+    public void TestPrimesFinal()
+    {
+        Assert.Multiple(() =>
+        {
+            int[] nullArray = PrimeGeneratorFinal.GeneratePrimeNumbers(0);
+            Assert.That(nullArray, Has.Length.EqualTo(0));
+
+            int[] minArray = PrimeGeneratorFinal.GeneratePrimeNumbers(2);
+            Assert.That(minArray, Has.Length.EqualTo(1));
+            Assert.That(minArray[0], Is.EqualTo(2));
+
+            int[] threeArray = PrimeGeneratorFinal.GeneratePrimeNumbers(3);
+            Assert.That(threeArray, Has.Length.EqualTo(2));
+            Assert.That(threeArray[0], Is.EqualTo(2));
+            Assert.That(threeArray[1], Is.EqualTo(3));
+
+            int[] centArray = PrimeGeneratorFinal.GeneratePrimeNumbers(100);
+            Assert.That(centArray, Has.Length.EqualTo(25));
+            Assert.That(centArray[24], Is.EqualTo(97));
+        });
+    }
 
     [Test]
     public void TestExhaustive()
     {
-        for (int i = 2; i < 500; i++)
+        Assert.Multiple(() =>
         {
-            VerifyPrimeList(GeneratorPrimes.GeneratePrimeNumbers(i));
-        }
+            for (int i = 2; i < 500; i++)
+            {
+                VerifyPrimeList(GeneratorPrimes.GeneratePrimeNumbers(i));
+            }
+            for (int i = 2; i < 500; i++)
+            {
+                VerifyPrimeList(PrimeGeneratorV2.GeneratePrimeNumbers(i));
+            }
+            for (int i = 2; i < 500; i++)
+            {
+                VerifyPrimeList(PrimeGeneratorFinal.GeneratePrimeNumbers(i));
+            }
+        });
     }
 
     private static void VerifyPrimeList(int[] list)
