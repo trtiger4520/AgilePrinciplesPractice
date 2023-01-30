@@ -1,29 +1,27 @@
-﻿using System.Collections;
+﻿namespace AgilePrinciplesPractice.Ch9.CleanUpVer;
 
-namespace AgilePrinciplesPractice.Ch9;
-
-public interface Shape
+public interface IShape
 {
     void Draw();
 }
 
-public class Square : Shape
+public class Square : IShape
 {
     public void Draw()
     {
     }
 }
 
-public class Circle : Shape
+public class Circle : IShape
 {
     public void Draw()
     {
     }
 }
 
-public class ShapeComparer : IComparer
+public class ShapeComparer : IComparer<IShape>
 {
-    private static Hashtable priorities = new Hashtable();
+    private readonly static Dictionary<Type, int> priorities = new();
 
     static ShapeComparer()
     {
@@ -31,27 +29,27 @@ public class ShapeComparer : IComparer
         priorities.Add(typeof(Square), 2);
     }
 
-    public int Compare(object o1, object o2)
+    public int Compare(IShape o1, IShape o2)
     {
         int priority1 = PriorityFor(o1.GetType());
         int priority2 = PriorityFor(o2.GetType());
         return priority1.CompareTo(priority2);
     }
 
-    public void DrawAllShapes(ArrayList shapes)
+    public static void DrawAllShapes(List<IShape> shapes)
     {
         shapes.Sort(new ShapeComparer());
-        foreach (Shape shape in shapes)
+        foreach (var shape in shapes)
         {
             shape.Draw();
         }
     }
 
-    private int PriorityFor(Type type)
+    private static int PriorityFor(Type type)
     {
-        if (priorities.Contains(type))
+        if (priorities.TryGetValue(type, out int priority))
         {
-            return (int)priorities[type];
+            return priority;
         }
 
         return 0;
